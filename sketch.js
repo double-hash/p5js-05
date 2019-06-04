@@ -30,7 +30,6 @@ class Shape {
             this.centroid.y += (y0 + y1)*a;
         }
         signedArea *= 0.5;
-        console.log(width*height / signedArea);
         this.centroid.x /= (6.0*signedArea);
         this.centroid.y /= (6.0*signedArea);
         shapes.push(shape);
@@ -152,7 +151,6 @@ function draw() {
   if (shape.state === 'completed') {
     noStroke();
     shape.clone();
-    noLoop();
   }
 }
 
@@ -163,8 +161,5 @@ function mouseClicked(){
     if (shape.state === 'spacing' && s != undefined) {
       shape.space = s;
       shape.state = 'completed';
-      // shape.clone ?
     }
-    console.log(shape);
-    console.log(shapes);
 }
