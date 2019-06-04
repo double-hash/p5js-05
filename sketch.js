@@ -53,51 +53,54 @@ class Shape {
     }
   }
 
-  render(){
-      push();
+  render(scl){
+      if (scl >= 1) {
+        push();
+        translate(-this.centroid.x*(scl-1), -this.centroid.y*(scl-1));
+        scale(scl);
+      }
+      else {
+        translate(this.centroid.x*(1-scl), this.centroid.y*(1-scl));
+        scale(scl);
+      }
       beginShape();
       this.vertices.forEach(function(e){
         vertex(e.x,e.y);
       });
       endShape(CLOSE);
-      pop();
+      if (scl >= 1) {
+        pop();
+      }
   }
 
   clone(){
 
-    for (var i = 100; i >= 1; i--){
+    for (var i = 20; i >= 1; i--){
       push();
-      var currS = Math.pow(this.space, i);
       if (i%2 === 0){
         fill(255);
       }
       else {
         fill(0);
       }
-      translate(-shape.centroid.x*(currS-1), -shape.centroid.y*(currS-1));
-      scale(currS);
-      shape.render();
+      shape.render(Math.pow(this.space, i));
       pop();
     }
-
     shape.render();
-
     push();
-    for (var i = 50; i > 0; i--){
+    for (var i = 20; i > 0; i--){
       if (i%2 === 0){
         fill(0);
       }
       else {
         fill(255);
       }
-      translate(shape.centroid.x*(1-1/shape.space), shape.centroid.y*(1-1/shape.space));
-      scale(1/shape.space);
-      shape.render();
+      shape.render(1/shape.space);
     }
     pop();
   }
 
-  showHelper(){
+  verticeHelper(){
     push();
     stroke(0);
     this.vertices.forEach(function(e){
@@ -126,6 +129,8 @@ let shape = new Shape;
 let shapes = [];
 let s;
 let magnetrange = 20;
+let z = 1;
+let v;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -134,24 +139,35 @@ function setup() {
 function draw() {
   background(255);
   if (shape.state === 'drawing') {
-    shape.showHelper();
-    shape.drawLine();
+    shape.verticeHelper();
     shape.lineHelper();
+    shape.drawLine();
   }
   if (shape.state === 'spacing') {push();
     push();
     fill(0);
     s = abs(map(dist(mouseX, mouseY, shape.centroid.x, shape.centroid.y), 0, width, 1, 5));
-    translate(-shape.centroid.x*(s-1), -shape.centroid.y*(s-1));
-    scale(s);
-    shape.render();
+    shape.render(s);
     pop();
     shape.render();
   }
   if (shape.state === 'completed') {
     noStroke();
+    v = map(mouseY, 0, height, 0.90, 1.10);
+    z = z * v ;
+    translate(-shape.centroid.x*(z-1), -shape.centroid.y*(z-1));
+    scale(z);
     shape.clone();
+    if (z > 2 || z < 0.5){
+      z= (z / z);
+    }
   }
+  // push();
+  // let fps = frameRate();
+  // fill(0);
+  // stroke(255);
+  // text("FPS: " + fps.toFixed(2), 10, 10);
+  // pop();
 }
 
 function mouseClicked(){
@@ -162,4 +178,5 @@ function mouseClicked(){
       shape.space = s;
       shape.state = 'completed';
     }
+    console.log(z);
 }
