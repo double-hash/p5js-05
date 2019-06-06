@@ -6,6 +6,7 @@ class Shape {
       x: 0,
       y: 0,
     };
+    this.signedArea = 0;
     this.space = 0;
   }
 
@@ -16,8 +17,8 @@ class Shape {
       if (x - this.vertices[0].x >= -magnetrange && x - this.vertices[0].x <= magnetrange && y - this.vertices[0].y >= -magnetrange && y - this.vertices[0].y <= magnetrange ) {
         // CHANGE SHAPE STATE TO DRAWED
         this.state = 'spacing';
+        document.getElementById("caption").innerHTML = "Select spacing and click to generate";
         // GO FIND THE CENTROID OF IT, THIS WAY WILL WILL BE ABLE TO ALIGN THE SHAPES WITH DIFFERENT SCALES
-        var signedArea = 0;
         for (var i=0; i<this.vertices.length; ++i)
         {
             var x0 = this.vertices[i].x;
@@ -25,13 +26,13 @@ class Shape {
             var x1 = this.vertices[(i+1) % this.vertices.length].x;
             var y1 = this.vertices[(i+1) % this.vertices.length].y;
             var a = x0*y1 - x1*y0;
-            signedArea += a;
+            this.signedArea += a;
             this.centroid.x += (x0 + x1)*a;
             this.centroid.y += (y0 + y1)*a;
         }
-        signedArea *= 0.5;
-        this.centroid.x /= (6.0*signedArea);
-        this.centroid.y /= (6.0*signedArea);
+        this.signedArea *= 0.5;
+        this.centroid.x /= (6.0*this.signedArea);
+        this.centroid.y /= (6.0*this.signedArea);
         shapes.push(shape);
       }
     }
@@ -74,8 +75,8 @@ class Shape {
   }
 
   clone(){
-
-    for (var i = 20; i >= 1; i--){
+    var c = abs((width*height) / this.signedArea);
+    for (var i = 50; i >= 1; i--){
       push();
       if (i%2 === 0){
         fill(255);
@@ -88,7 +89,7 @@ class Shape {
     }
     shape.render();
     push();
-    for (var i = 20; i > 0; i--){
+    for (var i = 50; i > 0; i--){
       if (i%2 === 0){
         fill(0);
       }
@@ -153,7 +154,7 @@ function draw() {
   }
   if (shape.state === 'completed') {
     noStroke();
-    v = map(mouseY, 0, height, 0.90, 1.10);
+    v = map(mouseY, 0, height, 0.99, 1.01);
     z = z * v ;
     translate(-shape.centroid.x*(z-1), -shape.centroid.y*(z-1));
     scale(z);
@@ -177,6 +178,7 @@ function mouseClicked(){
     if (shape.state === 'spacing' && s != undefined) {
       shape.space = s;
       shape.state = 'completed';
+      document.getElementById("caption").innerHTML = "";
     }
     console.log(z);
 }
