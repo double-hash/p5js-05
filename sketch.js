@@ -154,7 +154,7 @@ function draw() {
   }
   if (shape.state === 'completed') {
     noStroke();
-    v = map(mouseY, 0, height, 0.97, 1.03);
+    v = map(mouseY, 0, height, 0.98, 1.02);
     z = z * v ;
     translate(-shape.centroid.x*(z-1), -shape.centroid.y*(z-1));
     scale(z);
