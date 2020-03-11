@@ -154,13 +154,16 @@ function draw() {
   }
   if (shape.state === 'completed') {
     noStroke();
-    v = map(mouseY, 0, height, 0.99, 1.01);
+    v = map(mouseY, 0, height, 0.97, 1.03);
     z = z * v ;
     translate(-shape.centroid.x*(z-1), -shape.centroid.y*(z-1));
     scale(z);
     shape.clone();
-    if (z > 2 || z < 0.5){
-      z= (z / z);
+    if (z > s ){
+      z= 1/s;
+    }
+    if (z < (1/s)) {
+      z = s;
     }
   }
   // push();
@@ -180,5 +183,4 @@ function mouseClicked(){
       shape.state = 'completed';
       document.getElementById("caption").innerHTML = "";
     }
-    console.log(z);
 }
